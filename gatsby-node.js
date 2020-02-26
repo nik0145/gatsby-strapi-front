@@ -21,8 +21,19 @@ const queryArticle = `
       }
     }
     `
+    const queryAuthors = `
+    {
+      allStrapiUser {
+        edges {
+          node {
+            id
+          }
+        }
+      }
+    }
+    `
 exports.createPages = ({actions, graphql}) =>{
-    console.log(actions, graphql)
+    
     const { createPage} = actions;
     const getArticles = makeRequest(graphql,queryArticle).then(resp=>{
         resp.data.allStrapiArticle.edges.forEach(({node})=>{
@@ -35,5 +46,17 @@ exports.createPages = ({actions, graphql}) =>{
             })
         })
     })
-        return getArticles;
+    const getAuthors = makeRequest(graphql, queryAuthors).then(result => {
+    // Create pages for each user.
+    result.data.allStrapiUser.edges.forEach(({ node }) => {
+      createPage({
+        path: `/authors/${node.id}`,
+        component: path.resolve(`src/templates/author.js`),
+        context: {
+          id: node.id,
+        },
+      })
+    })
+  });
+        return Promise.all([getArticles,getAuthors]);
 };

@@ -7,7 +7,7 @@ const ArticleTemplate = ({data})=>(
     <Layout>
     <h1>{data.strapiArticle.title}</h1>
     <p>by <Link to={`/authors/User_${data.strapiArticle.author.id}`}>{data.strapiArticle.author.username}</Link></p>
-    <Img fixed={data.strapiArticle.content} />
+    <Img fluid={data.strapiArticle.image.childImageSharp.fluid} />
     <p>{data.strapiArticle.content}</p>
     </Layout>
 )
@@ -20,10 +20,8 @@ query ArticleTemplate($id: String!) {
       content
       image {
           childImageSharp {
-            fixed(width: 200, height: 125) {
+            fluid(maxWidth: 960) {
                 base64
-                width
-                height
                 src
                 srcSet
             }
